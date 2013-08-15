@@ -1,9 +1,33 @@
-x11-touchscreen-calibrator
+x11-ts-cal
 ==========================
 
 X Window System's Touchscreen Calibrator
 
 The purpose is to calibrate the touchscreen's coordinates automatically.
+
+Build from source
+=================
+
+Prerequisite
+------------
+
+Debian/Ubuntu
+
+    libxi-dev
+    libx11-dev
+    x11proto-input-dev
+
+Fedora/openSUSE/Mageia
+
+    libXi-devel
+    libX11-devel
+
+Compilation
+-----------
+
+    autoreconf -if
+    ./configure
+    make
 
 Coordinate Transformation Matrix
 ================================
