@@ -15,12 +15,14 @@ Debian/Ubuntu
 
     libxi-dev
     libx11-dev
+    libxrandr-dev
     x11proto-input-dev
 
 Fedora/openSUSE/Mageia
 
     libXi-devel
     libX11-devel
+    libXrandr-devel
 
 Compilation
 -----------

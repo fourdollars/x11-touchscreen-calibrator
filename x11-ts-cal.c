@@ -22,6 +22,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/extensions/XInput2.h>
+#include <X11/extensions/Xrandr.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,6 +50,83 @@ void search_touchscreen_device(Display *display)
     XIFreeDeviceInfo(info);
 }
 
+void get_display_info(Display *display)
+{
+	int                 screen = DefaultScreen(display);
+    Window	            root   = RootWindow(display, screen);
+    XRRScreenResources *res    = XRRGetScreenResourcesCurrent(display, root);
+
+    int i, j, k;
+    int minWidth, minHeight, maxWidth, maxHeight;
+
+    printf("Total: Crtc %d, Mode %d, Output %d\n", res->ncrtc, res->nmode, res->noutput);
+
+    if (XRRGetScreenSizeRange(display, root, &minWidth, &minHeight, &maxWidth, &maxHeight) == True)
+    {
+        printf("Screen %d: minimum %d x %d, current %d x %d, maximum %d x %d\n",
+                screen,
+                minWidth, minHeight,
+                DisplayWidth(display, screen),
+                DisplayHeight(display, screen),
+                maxWidth, maxHeight);
+    }
+
+    for (i = 0; i < res->ncrtc; i++)
+    {
+        XRRCrtcInfo *crtc = XRRGetCrtcInfo (display, res, res->crtcs[i]);
+        for (j = 0; j < res->nmode; j++)
+        {
+            XRRModeInfo mode = res->modes[j];
+            if (mode.id == crtc->mode && crtc->noutput == 1) {
+                XRROutputInfo *output = XRRGetOutputInfo (display, res, crtc->outputs[0]);
+                printf("Current %s %d x %d (%d, %d)\n", output->name, crtc->width, crtc->height, crtc->x, crtc->y);
+            }
+        }
+    }
+    for (i = 0; i < res->noutput; i++)
+    {
+        XRROutputInfo *output = XRRGetOutputInfo (display, res, res->outputs[i]);
+
+        if (output->connection == RR_Connected)
+        {
+            if (strcmp("LVDS", output->name) == 0)
+            {
+                for (j = 0; j < output->nmode; j++)
+                {
+                    if (j < output->npreferred)
+                    {
+                        RRMode *mode = output->modes + j;
+
+                        for (k = 0; k < res->nmode; k++)
+                        {
+                            XRRModeInfo *mode_info = &res->modes[k];
+                            if (mode_info->id == *mode) {
+                                printf("Preferred %s %d x %d %s\n", output->name, mode_info->width, mode_info->height, mode_info->name);
+                            }
+                        }
+                    }
+                }
+            } else if (strcmp("eDP1", output->name) == 0) {
+                for (j = 0; j < output->nmode; j++)
+                {
+                    if (j < output->npreferred)
+                    {
+                        RRMode *mode = output->modes + j;
+
+                        for (k = 0; k < res->nmode; k++)
+                        {
+                            XRRModeInfo *mode_info = &res->modes[k];
+                            if (mode_info->id == *mode) {
+                                printf("Preferred %s %d x %d %s\n", output->name, mode_info->width, mode_info->height, mode_info->name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 int main(int argc, char *argv[])
 {
     Display *display = XOpenDisplay(NULL);
@@ -59,6 +137,8 @@ int main(int argc, char *argv[])
     }
 
     search_touchscreen_device(display);
+    XSync(display, False);
+    get_display_info(display);
     XSync(display, False);
     XCloseDisplay(display);
 

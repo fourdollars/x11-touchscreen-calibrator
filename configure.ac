@@ -19,7 +19,7 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 
 # Checks for libraries.
-PKG_CHECK_MODULES(X11, [x11 xi inputproto])
+PKG_CHECK_MODULES(X11, [x11 xi inputproto xrandr])
 
 # Checks for header files.
 AC_PATH_X
