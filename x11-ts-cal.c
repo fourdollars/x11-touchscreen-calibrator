@@ -41,6 +41,7 @@ static int dy; /* display y */
 static Rotation rotation = RR_Rotate_0;
 static char* preferred;
 static char* scaling_mode;
+static char* touch_screen;
 
 static const char* white_list[] = {
     "LVDS",
@@ -63,7 +64,8 @@ void search_touchscreen_device(Display *display)
         for (j = 0; j < dev->num_classes; j++) {
             touch = (XITouchClassInfo*) dev->classes[j];
             if (touch->type == XITouchClass && touch->mode == XIDirectTouch) {
-                printf("%s\n", dev->name);
+                if (touch_screen) free(touch_screen);
+                touch_screen = strdup(dev->name);
             }
         }
     }
@@ -80,16 +82,8 @@ void get_display_info(Display *display)
     int i, j, k, l;
     int minWidth, minHeight, maxWidth, maxHeight;
 
-    printf("Total: Crtc %d, Mode %d, Output %d\n", res->ncrtc, res->nmode, res->noutput);
-
     if (XRRGetScreenSizeRange(display, root, &minWidth, &minHeight, &maxWidth, &maxHeight) == True)
     {
-        printf("Screen %d: minimum %d x %d, current %d x %d, maximum %d x %d\n",
-                screen,
-                minWidth, minHeight,
-                DisplayWidth(display, screen),
-                DisplayHeight(display, screen),
-                maxWidth, maxHeight);
         sw = DisplayWidth(display, screen);
         sh = DisplayHeight(display, screen);
     }
@@ -117,7 +111,6 @@ void get_display_info(Display *display)
                                 XRRModeInfo *mode_info = &res->modes[k];
                                 if (mode_info->id == *mode) {
                                     int nprop = 0;
-                                    printf("Preferred %s %d x %d %s\n", output->name, mode_info->width, mode_info->height, mode_info->name);
                                     if (preferred) free(preferred);
                                     preferred = strdup(output->name);
                                     pw = mode_info->width;
@@ -162,19 +155,12 @@ void get_display_info(Display *display)
             XRRModeInfo mode = res->modes[j];
             if (mode.id == crtc->mode && crtc->noutput == 1) {
                 XRROutputInfo *output = XRRGetOutputInfo (display, res, crtc->outputs[0]);
-                printf("Current %s %d x %d (%d, %d)", output->name, crtc->width, crtc->height, crtc->x, crtc->y);
-                if (crtc->rotation & RR_Rotate_0) printf(" RR_Rotate_0");
-                if (crtc->rotation & RR_Rotate_90) printf(" RR_Rotate_90");
-                if (crtc->rotation & RR_Rotate_180) printf(" RR_Rotate_180");
-                if (crtc->rotation & RR_Rotate_270) printf(" RR_Rotate_270");
-                if (crtc->rotation & RR_Reflect_X) printf(" RR_Reflect_X");
-                if (crtc->rotation & RR_Reflect_Y) printf(" RR_Reflect_Y");
-                printf("\n");
                 if (preferred && strcmp(preferred, output->name) == 0) {
                     dw = crtc->width;
                     dh = crtc->height;
                     dx = crtc->x;
                     dy = crtc->y;
+                    rotation = crtc->rotation;
                 }
             }
         }
@@ -193,7 +179,18 @@ int main(int argc, char *argv[])
     search_touchscreen_device(display);
     get_display_info(display);
 
-    printf("screen: %dx%d, display: %dx%d (%d,%d), preferred: %dx%d (%s) %s\n", sw, sh, dw, dh, dx, dy, pw, ph, preferred, scaling_mode);
+    if (touch_screen) {
+        printf("Touchscreen: '%s'\n", touch_screen);
+    }
+
+    printf("screen: %dx%d, display: %dx%d (%d,%d), preferred: %dx%d (%s) '%s'", sw, sh, dw, dh, dx, dy, pw, ph, preferred, scaling_mode);
+    if (rotation & RR_Rotate_0) printf(" RR_Rotate_0");
+    if (rotation & RR_Rotate_90) printf(" RR_Rotate_90");
+    if (rotation & RR_Rotate_180) printf(" RR_Rotate_180");
+    if (rotation & RR_Rotate_270) printf(" RR_Rotate_270");
+    if (rotation & RR_Reflect_X) printf(" RR_Reflect_X");
+    if (rotation & RR_Reflect_Y) printf(" RR_Reflect_Y");
+    printf("\n");
 
     XSync(display, False);
     XCloseDisplay(display);
