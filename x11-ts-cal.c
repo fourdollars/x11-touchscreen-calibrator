@@ -80,6 +80,12 @@ void get_display_info(Display *display)
             if (mode.id == crtc->mode && crtc->noutput == 1) {
                 XRROutputInfo *output = XRRGetOutputInfo (display, res, crtc->outputs[0]);
                 printf("Current %s %d x %d (%d, %d)\n", output->name, crtc->width, crtc->height, crtc->x, crtc->y);
+                if (crtc->rotation & RR_Rotate_0) printf("RR_Rotate_0\n");
+                if (crtc->rotation & RR_Rotate_90) printf("RR_Rotate_90\n");
+                if (crtc->rotation & RR_Rotate_180) printf("RR_Rotate_180\n");
+                if (crtc->rotation & RR_Rotate_270) printf("RR_Rotate_270\n");
+                if (crtc->rotation & RR_Reflect_X) printf("RR_Reflect_X\n");
+                if (crtc->rotation & RR_Reflect_Y) printf("RR_Reflect_Y\n");
             }
         }
     }
