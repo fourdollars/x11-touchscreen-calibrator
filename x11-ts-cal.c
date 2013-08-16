@@ -38,9 +38,15 @@ static int dh; /* display height */
 static int dx; /* display x */
 static int dy; /* display y */
 
+typedef unsigned short ScalingMode;
+#define ScalingMode_None        0
+#define ScalingMode_Full        1
+#define ScalingMode_Center      2
+#define ScalingMode_Full_aspect 3
+static ScalingMode scaling_mode;
+
 static Rotation rotation = RR_Rotate_0;
 static char* preferred;
-static char* scaling_mode;
 static char* touch_screen;
 
 static const char* white_list[] = {
@@ -132,9 +138,18 @@ void get_display_info(Display *display)
                                             if (actual_type == XA_ATOM &&
                                                 actual_format == 32 &&
                                                 nitems == 1 &&
-                                                bytes_after == 0) {
-                                                if (scaling_mode) free(scaling_mode);
-                                                scaling_mode = strdup(XGetAtomName (display, ((Atom *)prop)[0]));
+                                                bytes_after == 0)
+                                            {
+                                                const char* name = XGetAtomName (display, ((Atom *)prop)[0]);
+                                                if (strcmp("None", name) == 0) {
+                                                    scaling_mode = ScalingMode_None;
+                                                } else if (strcmp("Full", name) == 0) {
+                                                    scaling_mode = ScalingMode_Full;
+                                                } else if (strcmp("Center", name) == 0) {
+                                                    scaling_mode = ScalingMode_Center;
+                                                } else if (strcmp("Full aspect", name) == 0) {
+                                                    scaling_mode = ScalingMode_Full_aspect;
+                                                }
                                             }
                                         }
                                     }
@@ -183,7 +198,22 @@ int main(int argc, char *argv[])
         printf("Touchscreen: '%s'\n", touch_screen);
     }
 
-    printf("screen: %dx%d, display: %dx%d (%d,%d), preferred: %dx%d (%s) '%s'", sw, sh, dw, dh, dx, dy, pw, ph, preferred, scaling_mode);
+    printf("screen: %dx%d, display: %dx%d (%d,%d), preferred: %dx%d (%s)", sw, sh, dw, dh, dx, dy, pw, ph, preferred);
+    printf(", scaling mode:");
+    switch (scaling_mode) {
+        case ScalingMode_None:
+            printf(" 'None'");
+            break;
+        case ScalingMode_Full:
+            printf(" 'Full'");
+            break;
+        case ScalingMode_Center:
+            printf(" 'Center'");
+            break;
+        case ScalingMode_Full_aspect:
+            printf(" 'Full aspect'");
+            break;
+    }
     if (rotation & RR_Rotate_0) printf(" RR_Rotate_0");
     if (rotation & RR_Rotate_90) printf(" RR_Rotate_90");
     if (rotation & RR_Rotate_180) printf(" RR_Rotate_180");
