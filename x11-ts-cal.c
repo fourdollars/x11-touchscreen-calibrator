@@ -20,6 +20,7 @@
 #include <config.h>
 #endif
 
+#include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/XInput2.h>
 #include <X11/extensions/Xrandr.h>
@@ -39,6 +40,7 @@ static int dy; /* display y */
 
 static Rotation rotation = RR_Rotate_0;
 static char* preferred;
+static char* scaling_mode;
 
 static const char* white_list[] = {
     "LVDS",
@@ -114,11 +116,35 @@ void get_display_info(Display *display)
                             {
                                 XRRModeInfo *mode_info = &res->modes[k];
                                 if (mode_info->id == *mode) {
+                                    int nprop = 0;
                                     printf("Preferred %s %d x %d %s\n", output->name, mode_info->width, mode_info->height, mode_info->name);
                                     if (preferred) free(preferred);
                                     preferred = strdup(output->name);
                                     pw = mode_info->width;
                                     ph = mode_info->height;
+                                    Atom *props = XRRListOutputProperties (display, res->outputs[i], &nprop);
+                                    for (l = 0; l < nprop; l++)
+                                    {
+                                        if (strcmp("scaling mode", XGetAtomName (display, props[l])) == 0)
+                                        {
+                                            unsigned char *prop;
+                                            int actual_format;
+                                            unsigned long nitems, bytes_after;
+                                            Atom actual_type;
+                                            XRRGetOutputProperty (display, res->outputs[i], props[l],
+                                                    0, 100, False, False,
+                                                    AnyPropertyType,
+                                                    &actual_type, &actual_format,
+                                                    &nitems, &bytes_after, &prop);
+                                            if (actual_type == XA_ATOM &&
+                                                actual_format == 32 &&
+                                                nitems == 1 &&
+                                                bytes_after == 0) {
+                                                if (scaling_mode) free(scaling_mode);
+                                                scaling_mode = strdup(XGetAtomName (display, ((Atom *)prop)[0]));
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -165,12 +191,12 @@ int main(int argc, char *argv[])
     }
 
     search_touchscreen_device(display);
-    XSync(display, False);
     get_display_info(display);
+
+    printf("screen: %dx%d, display: %dx%d (%d,%d), preferred: %dx%d (%s) %s\n", sw, sh, dw, dh, dx, dy, pw, ph, preferred, scaling_mode);
+
     XSync(display, False);
     XCloseDisplay(display);
-
-    printf("screen: %dx%d, display: %dx%d (%d,%d), preferred: %dx%d (%s)\n", sw, sh, dw, dh, dx, dy, pw, ph, preferred);
 
     return EXIT_SUCCESS;
 }
