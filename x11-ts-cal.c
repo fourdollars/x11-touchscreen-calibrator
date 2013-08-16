@@ -247,15 +247,72 @@ static int apply_matrix(Display *dpy, int deviceid, float m[])
 
 static void multiply(float a[], float b[], float c[])
 {
-    c[0] = a[0] * b[0] + a[1] * b[3] + a[2] * b[6];
-    c[1] = a[0] * b[1] + a[1] * b[4] + a[2] * b[7];
-    c[2] = a[0] * b[2] + a[1] * b[5] + a[2] * b[8];
-    c[3] = a[3] * b[0] + a[4] * b[3] + a[5] * b[6];
-    c[4] = a[3] * b[1] + a[4] * b[4] + a[5] * b[7];
-    c[5] = a[3] * b[2] + a[4] * b[5] + a[5] * b[8];
-    c[6] = a[6] * b[0] + a[7] * b[3] + a[8] * b[6];
-    c[7] = a[6] * b[1] + a[7] * b[4] + a[8] * b[7];
-    c[8] = a[6] * b[2] + a[7] * b[5] + a[8] * b[8];
+    int i;
+    float m[9] = {0};
+    m[0] = a[0] * b[0] + a[1] * b[3] + a[2] * b[6];
+    m[1] = a[0] * b[1] + a[1] * b[4] + a[2] * b[7];
+    m[2] = a[0] * b[2] + a[1] * b[5] + a[2] * b[8];
+    m[3] = a[3] * b[0] + a[4] * b[3] + a[5] * b[6];
+    m[4] = a[3] * b[1] + a[4] * b[4] + a[5] * b[7];
+    m[5] = a[3] * b[2] + a[4] * b[5] + a[5] * b[8];
+    m[6] = a[6] * b[0] + a[7] * b[3] + a[8] * b[6];
+    m[7] = a[6] * b[1] + a[7] * b[4] + a[8] * b[7];
+    m[8] = a[6] * b[2] + a[7] * b[5] + a[8] * b[8];
+    for (i = 0; i < 9; i++) c[i] = m[i];
+}
+
+static void rotate(float m[])
+{
+    float rotate90[] = {
+        0   , -1.0f, 1.0f,
+        1.0f, 0    , 0,
+        0   , 0    , 1.0f
+    };
+    float rotate180[] = {
+        -1.0f, 0    , 1.0f,
+        0    , -1.0f, 1.0f,
+        0    , 0    , 1.0f
+    };
+    float rotate270[] = {
+        0    , 1.0f, 0,
+        -1.0f, 0   , 1.0f,
+        0    , 0   , 1.0f
+    };
+
+    if (rotation & RR_Rotate_90) {
+        dw ^= dh;
+        dh ^= dw;
+        dw ^= dh;
+        multiply(m, rotate90, m);
+    } else if (rotation & RR_Rotate_180) {
+        multiply(m, rotate180, m);
+    } else if (rotation & RR_Rotate_270) {
+        dw ^= dh;
+        dh ^= dw;
+        dw ^= dh;
+        multiply(m, rotate270, m);
+    }
+}
+
+static void reflect(float m[])
+{
+    float reflectX[] = {
+        -1.0f, 0   , 1.0f,
+        0    , 1.0f, 0,
+        0    , 0   , 1.0f
+    };
+    float reflectY[] = {
+        1.0f, 0    , 0,
+        0   , -1.0f, 1.0f,
+        0   , 0    , 1.0f
+    };
+
+    if (rotation & RR_Reflect_X) {
+        multiply(m, reflectX, m);
+    }
+    if (rotation & RR_Reflect_Y) {
+        multiply(m, reflectY, m);
+    }
 }
 
 void scaling_full_mode(Display *display)
@@ -271,7 +328,12 @@ void scaling_full_mode(Display *display)
         0              , 0              , 1.0f
     };
     float m[9] = {0};
+
     multiply(shift, zoom, m);
+
+    rotate(m);
+    reflect(m);
+
     apply_matrix(display, deviceid, m);
 }
 
@@ -288,6 +350,11 @@ void scaling_center_mode(Display *display)
         0              , 0              , 1.0f
     };
     float m1[9] = {0};
+    multiply(shift1, zoom1, m1);
+
+    rotate(m1);
+    reflect(m1);
+
     float zoom2[9] = {
         1.0f * pw / dw , 0              , 0 ,
         0              , 1.0f * ph / dh , 0 ,
@@ -299,10 +366,11 @@ void scaling_center_mode(Display *display)
         0    , 0    , 1.0f
     };
     float m2[9] = {0};
-    float m[9] = {0};
-    multiply(shift1, zoom1, m1);
     multiply(zoom2, shift2, m2);
+
+    float m[9] = {0};
     multiply(m1, m2, m);
+
     apply_matrix(display, deviceid, m);
 }
 
@@ -319,6 +387,11 @@ void scaling_full_aspect_mode(Display *display)
         0              , 0              , 1.0f
     };
     float m1[9] = {0};
+    multiply(shift1, zoom1, m1);
+
+    rotate(m1);
+    reflect(m1);
+
     float zoom2[9] = {
         1.0f * pw * dh / ph / dw , 0    , 0 ,
         0                        , 1.0f , 0 ,
@@ -330,10 +403,11 @@ void scaling_full_aspect_mode(Display *display)
         0    , 0    , 1.0f
     };
     float m2[9] = {0};
-    float m[9] = {0};
-    multiply(shift1, zoom1, m1);
     multiply(zoom2, shift2, m2);
+
+    float m[9] = {0};
     multiply(m1, m2, m);
+
     apply_matrix(display, deviceid, m);
 }
 
