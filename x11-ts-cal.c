@@ -26,6 +26,25 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+static int pw; /* preferred width */
+static int ph; /* preferred height */
+static int sw; /* screen width */
+static int sh; /* screen height */
+static int dw; /* display width */
+static int dh; /* display height */
+static int dx; /* display x */
+static int dy; /* display y */
+
+static Rotation rotation = RR_Rotate_0;
+static char* preferred;
+
+static const char* white_list[] = {
+    "LVDS",
+    "LVDS1",
+    "eDP1"
+};
 
 void search_touchscreen_device(Display *display)
 {
@@ -56,7 +75,7 @@ void get_display_info(Display *display)
     Window	            root   = RootWindow(display, screen);
     XRRScreenResources *res    = XRRGetScreenResourcesCurrent(display, root);
 
-    int i, j, k;
+    int i, j, k, l;
     int minWidth, minHeight, maxWidth, maxHeight;
 
     printf("Total: Crtc %d, Mode %d, Output %d\n", res->ncrtc, res->nmode, res->noutput);
@@ -69,6 +88,44 @@ void get_display_info(Display *display)
                 DisplayWidth(display, screen),
                 DisplayHeight(display, screen),
                 maxWidth, maxHeight);
+        sw = DisplayWidth(display, screen);
+        sh = DisplayHeight(display, screen);
+    }
+
+    for (i = 0; i < res->noutput; i++)
+    {
+        XRROutputInfo *output = XRRGetOutputInfo (display, res, res->outputs[i]);
+
+        if (output->connection == RR_Connected)
+        {
+            int size = sizeof(white_list) / sizeof(char*);
+
+            for (l = 0; l < size; l++)
+            {
+                if (strcmp(white_list[l], output->name) == 0)
+                {
+                    for (j = 0; j < output->nmode; j++)
+                    {
+                        if (j < output->npreferred)
+                        {
+                            RRMode *mode = output->modes + j;
+
+                            for (k = 0; k < res->nmode; k++)
+                            {
+                                XRRModeInfo *mode_info = &res->modes[k];
+                                if (mode_info->id == *mode) {
+                                    printf("Preferred %s %d x %d %s\n", output->name, mode_info->width, mode_info->height, mode_info->name);
+                                    if (preferred) free(preferred);
+                                    preferred = strdup(output->name);
+                                    pw = mode_info->width;
+                                    ph = mode_info->height;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     for (i = 0; i < res->ncrtc; i++)
@@ -79,54 +136,19 @@ void get_display_info(Display *display)
             XRRModeInfo mode = res->modes[j];
             if (mode.id == crtc->mode && crtc->noutput == 1) {
                 XRROutputInfo *output = XRRGetOutputInfo (display, res, crtc->outputs[0]);
-                printf("Current %s %d x %d (%d, %d)\n", output->name, crtc->width, crtc->height, crtc->x, crtc->y);
-                if (crtc->rotation & RR_Rotate_0) printf("RR_Rotate_0\n");
-                if (crtc->rotation & RR_Rotate_90) printf("RR_Rotate_90\n");
-                if (crtc->rotation & RR_Rotate_180) printf("RR_Rotate_180\n");
-                if (crtc->rotation & RR_Rotate_270) printf("RR_Rotate_270\n");
-                if (crtc->rotation & RR_Reflect_X) printf("RR_Reflect_X\n");
-                if (crtc->rotation & RR_Reflect_Y) printf("RR_Reflect_Y\n");
-            }
-        }
-    }
-    for (i = 0; i < res->noutput; i++)
-    {
-        XRROutputInfo *output = XRRGetOutputInfo (display, res, res->outputs[i]);
-
-        if (output->connection == RR_Connected)
-        {
-            if (strcmp("LVDS", output->name) == 0)
-            {
-                for (j = 0; j < output->nmode; j++)
-                {
-                    if (j < output->npreferred)
-                    {
-                        RRMode *mode = output->modes + j;
-
-                        for (k = 0; k < res->nmode; k++)
-                        {
-                            XRRModeInfo *mode_info = &res->modes[k];
-                            if (mode_info->id == *mode) {
-                                printf("Preferred %s %d x %d %s\n", output->name, mode_info->width, mode_info->height, mode_info->name);
-                            }
-                        }
-                    }
-                }
-            } else if (strcmp("eDP1", output->name) == 0) {
-                for (j = 0; j < output->nmode; j++)
-                {
-                    if (j < output->npreferred)
-                    {
-                        RRMode *mode = output->modes + j;
-
-                        for (k = 0; k < res->nmode; k++)
-                        {
-                            XRRModeInfo *mode_info = &res->modes[k];
-                            if (mode_info->id == *mode) {
-                                printf("Preferred %s %d x %d %s\n", output->name, mode_info->width, mode_info->height, mode_info->name);
-                            }
-                        }
-                    }
+                printf("Current %s %d x %d (%d, %d)", output->name, crtc->width, crtc->height, crtc->x, crtc->y);
+                if (crtc->rotation & RR_Rotate_0) printf(" RR_Rotate_0");
+                if (crtc->rotation & RR_Rotate_90) printf(" RR_Rotate_90");
+                if (crtc->rotation & RR_Rotate_180) printf(" RR_Rotate_180");
+                if (crtc->rotation & RR_Rotate_270) printf(" RR_Rotate_270");
+                if (crtc->rotation & RR_Reflect_X) printf(" RR_Reflect_X");
+                if (crtc->rotation & RR_Reflect_Y) printf(" RR_Reflect_Y");
+                printf("\n");
+                if (preferred && strcmp(preferred, output->name) == 0) {
+                    dw = crtc->width;
+                    dh = crtc->height;
+                    dx = crtc->x;
+                    dy = crtc->y;
                 }
             }
         }
@@ -147,6 +169,8 @@ int main(int argc, char *argv[])
     get_display_info(display);
     XSync(display, False);
     XCloseDisplay(display);
+
+    printf("screen: %dx%d, display: %dx%d (%d,%d), preferred: %dx%d (%s)\n", sw, sh, dw, dh, dx, dy, pw, ph, preferred);
 
     return EXIT_SUCCESS;
 }
