@@ -150,6 +150,7 @@ void get_display_info(Display *display)
                                                 } else if (strcmp("Full aspect", name) == 0) {
                                                     scaling_mode = ScalingMode_Full_aspect;
                                                 }
+                                                goto next;
                                             }
                                         }
                                     }
@@ -161,6 +162,8 @@ void get_display_info(Display *display)
             }
         }
     }
+
+next:
 
     for (i = 0; i < res->ncrtc; i++)
     {
@@ -176,10 +179,14 @@ void get_display_info(Display *display)
                     dx = crtc->x;
                     dy = crtc->y;
                     rotation = crtc->rotation;
+                    goto end;
                 }
             }
         }
     }
+
+end:
+    return;
 }
 
 int main(int argc, char *argv[])
