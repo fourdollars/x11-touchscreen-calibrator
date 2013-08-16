@@ -48,6 +48,7 @@ static ScalingMode scaling_mode;
 static Rotation rotation = RR_Rotate_0;
 static char* preferred;
 static char* touch_screen;
+static int deviceid;
 
 static const char* white_list[] = {
     "LVDS",
@@ -72,6 +73,7 @@ void search_touchscreen_device(Display *display)
             if (touch->type == XITouchClass && touch->mode == XIDirectTouch) {
                 if (touch_screen) free(touch_screen);
                 touch_screen = strdup(dev->name);
+                deviceid = dev->deviceid;
             }
         }
     }
@@ -189,6 +191,152 @@ end:
     return;
 }
 
+typedef struct Matrix {
+        float m[9];
+} Matrix;
+
+static int apply_matrix(Display *dpy, int deviceid, float m[])
+{
+    Atom prop_float, prop_matrix;
+
+    union {
+        unsigned char *c;
+        float *f;
+    } data;
+    int format_return;
+    Atom type_return;
+    unsigned long nitems;
+    unsigned long bytes_after;
+
+    int rc, i;
+
+    prop_float = XInternAtom(dpy, "FLOAT", False);
+    prop_matrix = XInternAtom(dpy, "Coordinate Transformation Matrix", False);
+
+    if (!prop_float)
+    {
+        fprintf(stderr, "Float atom not found. This server is too old.\n");
+        return EXIT_FAILURE;
+    }
+    if (!prop_matrix)
+    {
+        fprintf(stderr, "Coordinate transformation matrix not found. This "
+                "server is too old\n");
+        return EXIT_FAILURE;
+    }
+
+    rc = XIGetProperty(dpy, deviceid, prop_matrix, 0, 9, False, prop_float,
+                       &type_return, &format_return, &nitems, &bytes_after,
+                       &data.c);
+    if (rc != Success || prop_float != type_return || format_return != 32 ||
+        nitems != 9 || bytes_after != 0)
+    {
+        fprintf(stderr, "Failed to retrieve current property values\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < 9; i++) data.f[i] = m[i];
+
+    XIChangeProperty(dpy, deviceid, prop_matrix, prop_float,
+                     format_return, PropModeReplace, data.c, nitems);
+
+    XFree(data.c);
+
+    return EXIT_SUCCESS;
+}
+
+static void multiply(float a[], float b[], float c[])
+{
+    c[0] = a[0] * b[0] + a[1] * b[3] + a[2] * b[6];
+    c[1] = a[0] * b[1] + a[1] * b[4] + a[2] * b[7];
+    c[2] = a[0] * b[2] + a[1] * b[5] + a[2] * b[8];
+    c[3] = a[3] * b[0] + a[4] * b[3] + a[5] * b[6];
+    c[4] = a[3] * b[1] + a[4] * b[4] + a[5] * b[7];
+    c[5] = a[3] * b[2] + a[4] * b[5] + a[5] * b[8];
+    c[6] = a[6] * b[0] + a[7] * b[3] + a[8] * b[6];
+    c[7] = a[6] * b[1] + a[7] * b[4] + a[8] * b[7];
+    c[8] = a[6] * b[2] + a[7] * b[5] + a[8] * b[8];
+}
+
+void scaling_full_mode(Display *display)
+{
+    float shift[9] = {
+        1.0f , 0    , 1.0f * dx / sw ,
+        0    , 1.0f , 1.0f * dy / sh ,
+        0    , 0    , 1.0f
+    };
+    float zoom[9] = {
+        1.0f * dw / sw , 0              , 0 ,
+        0              , 1.0f * dh / sh , 0 ,
+        0              , 0              , 1.0f
+    };
+    float m[9] = {0};
+    multiply(shift, zoom, m);
+    apply_matrix(display, deviceid, m);
+}
+
+void scaling_center_mode(Display *display)
+{
+    float shift1[9] = {
+        1.0f , 0    , 1.0f * dx / sw ,
+        0    , 1.0f , 1.0f * dy / sh ,
+        0    , 0    , 1.0f
+    };
+    float zoom1[9] = {
+        1.0f * dw / sw , 0              , 0 ,
+        0              , 1.0f * dh / sh , 0 ,
+        0              , 0              , 1.0f
+    };
+    float m1[9] = {0};
+    float zoom2[9] = {
+        1.0f * pw / dw , 0              , 0 ,
+        0              , 1.0f * ph / dh , 0 ,
+        0              , 0              , 1.0f
+    };
+    float shift2[9] = {
+        1.0f , 0    , - (1.0f - 1.0f * dw / pw) / 2 ,
+        0    , 1.0f , - (1.0f - 1.0f * dh / ph) / 2 ,
+        0    , 0    , 1.0f
+    };
+    float m2[9] = {0};
+    float m[9] = {0};
+    multiply(shift1, zoom1, m1);
+    multiply(zoom2, shift2, m2);
+    multiply(m1, m2, m);
+    apply_matrix(display, deviceid, m);
+}
+
+void scaling_full_aspect_mode(Display *display)
+{
+    float shift1[9] = {
+        1.0f , 0    , 1.0f * dx / sw ,
+        0    , 1.0f , 1.0f * dy / sh ,
+        0    , 0    , 1.0f
+    };
+    float zoom1[9] = {
+        1.0f * dw / sw , 0              , 0 ,
+        0              , 1.0f * dh / sh , 0 ,
+        0              , 0              , 1.0f
+    };
+    float m1[9] = {0};
+    float zoom2[9] = {
+        1.0f * pw * dh / ph / dw , 0    , 0 ,
+        0                        , 1.0f , 0 ,
+        0                        , 0    , 1.0f
+    };
+    float shift2[9] = {
+        1.0f , 0    , (1.0f * ph * dw / pw / dh - 1.0f) / 2 ,
+        0    , 1.0f , 0 ,
+        0    , 0    , 1.0f
+    };
+    float m2[9] = {0};
+    float m[9] = {0};
+    multiply(shift1, zoom1, m1);
+    multiply(zoom2, shift2, m2);
+    multiply(m1, m2, m);
+    apply_matrix(display, deviceid, m);
+}
+
 int main(int argc, char *argv[])
 {
     Display *display = XOpenDisplay(NULL);
@@ -228,6 +376,32 @@ int main(int argc, char *argv[])
     if (rotation & RR_Reflect_X) printf(" RR_Reflect_X");
     if (rotation & RR_Reflect_Y) printf(" RR_Reflect_Y");
     printf("\n");
+
+    if (touch_screen) {
+        if (dw * dh == 0) {
+            float m[9] = {
+                1.0f, 0    , 0,
+                0   , 1.0f , 0,
+                0   , 0    , 1.0f
+            };
+            apply_matrix(display, deviceid, m);
+        } else {
+            switch (scaling_mode) {
+                case ScalingMode_None:
+                    printf(" 'None'");
+                    break;
+                case ScalingMode_Full:
+                    scaling_full_mode(display);
+                    break;
+                case ScalingMode_Center:
+                    scaling_center_mode(display);
+                    break;
+                case ScalingMode_Full_aspect:
+                    scaling_full_aspect_mode(display);
+                    break;
+            }
+        }
+    }
 
     XSync(display, False);
     XCloseDisplay(display);

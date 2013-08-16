@@ -199,7 +199,7 @@ equals to
 
 equals to
 
-    ⎡ dw / sw ,  0       ,  dx / sw ⎤   ⎡ pw * dh / ph / dw , 0 , 0 ⎤   ⎡ 1 , 0 , (1 - pw * dh / ph / dw) / 2 ⎤
+    ⎡ dw / sw ,  0       ,  dx / sw ⎤   ⎡ pw * dh / ph / dw , 0 , 0 ⎤   ⎡ 1 , 0 , (ph * dw / pw / dh - 1) / 2 ⎤
     ⎜ 0       ,  dh / sh ,  dy / sh ⎥ X ⎜ 0                 , 1 , 0 ⎥ X ⎜ 0 , 1 , 0                           ⎥
     ⎣ 0       ,  0       ,  1       ⎦   ⎣ 0                 , 0 , 1 ⎦   ⎣ 0 , 0 , 1                           ⎦
 
