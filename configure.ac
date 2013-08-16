@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.68])
 AC_INIT([x11-ts-cal], [0.0], [https://github.com/fourdollars/x11-ts-cal/issues], [x11-ts-cal], [https://fourdollars.github.io/x11-ts-cal/])
 AC_CONFIG_SRCDIR([x11-ts-cal.c])
 AC_CONFIG_HEADERS([config.h])
