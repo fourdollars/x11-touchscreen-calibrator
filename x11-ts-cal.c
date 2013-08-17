@@ -195,6 +195,17 @@ typedef struct Matrix {
         float m[9];
 } Matrix;
 
+static void show(float m[])
+{
+    int i, j;
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            printf("%f ", m[i * 3 + j]);
+        }
+        printf("\n");
+    }
+}
+
 static int apply_matrix(Display *dpy, int deviceid, float m[])
 {
     Atom prop_float, prop_matrix;
@@ -210,6 +221,7 @@ static int apply_matrix(Display *dpy, int deviceid, float m[])
 
     int rc, i;
 
+    show(m);
     prop_float = XInternAtom(dpy, "FLOAT", False);
     prop_matrix = XInternAtom(dpy, "Coordinate Transformation Matrix", False);
 
@@ -245,9 +257,14 @@ static int apply_matrix(Display *dpy, int deviceid, float m[])
     return EXIT_SUCCESS;
 }
 
-static void multiply(float a[], float b[], float c[])
+static void duplicate(float a[], float b[])
 {
     int i;
+    for (i = 0; i < 9; i++) b[i] = a[i];
+}
+
+static void multiply(float a[], float b[], float c[])
+{
     float m[9] = {0};
     m[0] = a[0] * b[0] + a[1] * b[3] + a[2] * b[6];
     m[1] = a[0] * b[1] + a[1] * b[4] + a[2] * b[7];
@@ -258,10 +275,10 @@ static void multiply(float a[], float b[], float c[])
     m[6] = a[6] * b[0] + a[7] * b[3] + a[8] * b[6];
     m[7] = a[6] * b[1] + a[7] * b[4] + a[8] * b[7];
     m[8] = a[6] * b[2] + a[7] * b[5] + a[8] * b[8];
-    for (i = 0; i < 9; i++) c[i] = m[i];
+    duplicate(m, c);
 }
 
-static void rotate(float m[])
+static void rotate_reflect(float m[])
 {
     float rotate90[] = {
         0   , -1.0f, 1.0f,
@@ -278,24 +295,6 @@ static void rotate(float m[])
         -1.0f, 0   , 1.0f,
         0    , 0   , 1.0f
     };
-
-    if (rotation & RR_Rotate_90) {
-        dw ^= dh;
-        dh ^= dw;
-        dw ^= dh;
-        multiply(m, rotate90, m);
-    } else if (rotation & RR_Rotate_180) {
-        multiply(m, rotate180, m);
-    } else if (rotation & RR_Rotate_270) {
-        dw ^= dh;
-        dh ^= dw;
-        dw ^= dh;
-        multiply(m, rotate270, m);
-    }
-}
-
-static void reflect(float m[])
-{
     float reflectX[] = {
         -1.0f, 0   , 1.0f,
         0    , 1.0f, 0,
@@ -307,12 +306,43 @@ static void reflect(float m[])
         0   , 0    , 1.0f
     };
 
-    if (rotation & RR_Reflect_X) {
-        multiply(m, reflectX, m);
+    float t[9] = {
+        1.0f, 0   , 0,
+        0   , 1.0f, 0,
+        0   , 0   , 1.0f
+    };
+
+    if (rotation & RR_Rotate_90) {
+        dw ^= dh;
+        dh ^= dw;
+        dw ^= dh;
+        duplicate(rotate90, t);
+    } else if (rotation & RR_Rotate_180) {
+        duplicate(rotate180, t);
+    } else if (rotation & RR_Rotate_270) {
+        dw ^= dh;
+        dh ^= dw;
+        dw ^= dh;
+        duplicate(rotate270, t);
     }
-    if (rotation & RR_Reflect_Y) {
-        multiply(m, reflectY, m);
+
+    if ((rotation & RR_Rotate_0) || (rotation & RR_Rotate_180)) {
+        if (rotation & RR_Reflect_X) {
+            multiply(t, reflectX, t);
+        }
+        if (rotation & RR_Reflect_Y) {
+            multiply(t, reflectY, t);
+        }
+    } else {
+        if (rotation & RR_Reflect_X) {
+            multiply(t, reflectY, t);
+        }
+        if (rotation & RR_Reflect_Y) {
+            multiply(t, reflectX, t);
+        }
     }
+
+    multiply(m, t, m);
 }
 
 void scaling_full_mode(Display *display)
@@ -331,8 +361,7 @@ void scaling_full_mode(Display *display)
 
     multiply(shift, zoom, m);
 
-    rotate(m);
-    reflect(m);
+    rotate_reflect(m);
 
     apply_matrix(display, deviceid, m);
 }
@@ -352,8 +381,7 @@ void scaling_center_mode(Display *display)
     float m1[9] = {0};
     multiply(shift1, zoom1, m1);
 
-    rotate(m1);
-    reflect(m1);
+    rotate_reflect(m1);
 
     float zoom2[9] = {
         1.0f * pw / dw , 0              , 0 ,
@@ -389,8 +417,7 @@ void scaling_full_aspect_mode(Display *display)
     float m1[9] = {0};
     multiply(shift1, zoom1, m1);
 
-    rotate(m1);
-    reflect(m1);
+    rotate_reflect(m1);
 
     float zoom2[9] = {
         1.0f * pw * dh / ph / dw , 0    , 0 ,
