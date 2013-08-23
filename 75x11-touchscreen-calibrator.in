@@ -1,0 +1,3 @@
+if [ -f @bindir@/x11-touchscreen-calibrator ]; then
+    @bindir@/x11-touchscreen-calibrator -d
+fi
