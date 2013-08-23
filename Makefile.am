@@ -1,7 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 
-bin_PROGRAMS = x11-ts-cal
+bin_PROGRAMS = x11-touchscreen-calibrator
 
-x11_ts_cal_SOURCES = x11-ts-cal.c
-x11_ts_cal_CFLAGS = @X11_CFLAGS@
-x11_ts_cal_LDFLAGS = @X11_LIBS@
+x11_touchscreen_calibrator_SOURCES = x11-touchscreen-calibrator.c
+x11_touchscreen_calibrator_CFLAGS  = @X11_CFLAGS@
+x11_touchscreen_calibrator_LDFLAGS = @X11_LIBS@

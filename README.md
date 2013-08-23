@@ -1,4 +1,4 @@
-x11-ts-cal
+x11-touchscreen-calibrator
 ==========================
 
 X Window System's Touchscreen Calibrator
@@ -10,6 +10,11 @@ Build from source
 
 Prerequisite
 ------------
+
+    autoconf >= 2.68
+    automake >= 1.11
+    pkg-config >= 0.26
+    libtool >= 2.4.2
 
 Debian/Ubuntu
 
