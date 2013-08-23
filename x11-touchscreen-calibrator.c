@@ -438,15 +438,8 @@ void scaling_full_aspect_mode(Display *display)
     apply_matrix(display, deviceid, m);
 }
 
-int main(int argc, char *argv[])
+void routine(Display *display)
 {
-    Display *display = XOpenDisplay(NULL);
-
-    if (display == NULL) {
-        fprintf(stderr, "Unable to connect to X server\n");
-        return EXIT_FAILURE;
-    }
-
     search_touchscreen_device(display);
     get_display_info(display);
 
@@ -503,8 +496,50 @@ int main(int argc, char *argv[])
             }
         }
     }
+}
 
+int main(int argc, char *argv[])
+{
+	int		event_base, error_base;
+	int		major, minor;
+    Display *display = XOpenDisplay(NULL);
+
+    if (display == NULL) {
+        fprintf(stderr, "Unable to connect to X server\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!XRRQueryExtension (display, &event_base, &error_base) ||
+        !XRRQueryVersion (display, &major, &minor))
+    {
+        XCloseDisplay(display);
+        return EXIT_FAILURE;
+    }
+
+    routine(display);
     XSync(display, False);
+
+    XRRSelectInput(display, RootWindow(display, 0), RROutputChangeNotifyMask);
+
+    for (;;) {
+        XEvent ev;
+        XRRNotifyEvent *nev;
+
+        do {
+            XNextEvent(display, &ev);
+            switch (ev.type - event_base) {
+                case RRNotify:
+                    nev = (XRRNotifyEvent *) &ev;
+                    if (nev->subtype == RRNotify_OutputChange) {
+                        routine(display);
+                        XSync(display, False);
+                    }
+                    break;
+            }
+            usleep(100000);
+        } while (XEventsQueued(display, QueuedAfterFlush));
+    }
+
     XCloseDisplay(display);
 
     return EXIT_SUCCESS;
