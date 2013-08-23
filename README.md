@@ -243,3 +243,10 @@ $ xrandr -y
     ⎡ 1  0 0 ⎤
     ⎜ 0 -1 1 ⎥
     ⎣ 0  0 1 ⎦
+
+License
+=======
+
+Copyright 2013 Shih-Yuan Lee (FourDollars)
+
+Licensed under GPL version 3 or any later version - see [LICENSE](https://raw.github.com/fourdollars/x11-touchscreen-calibrator/master/LICENSE) file.
