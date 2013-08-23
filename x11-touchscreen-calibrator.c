@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 static int pw; /* preferred width */
 static int ph; /* preferred height */
@@ -500,9 +501,22 @@ void routine(Display *display)
 
 int main(int argc, char *argv[])
 {
-	int		event_base, error_base;
-	int		major, minor;
-    Display *display = XOpenDisplay(NULL);
+    int      event_base, error_base;
+    int      major, minor, opt , flag_d = 0;
+    Display *display;
+
+    while ((opt = getopt(argc, argv, "d")) != -1) {
+        switch (opt) {
+            case 'd':
+                flag_d = 1;
+                break;
+            default:
+                fprintf(stderr, "Usage: %s [-d]\n", argv[0]);
+                return EXIT_FAILURE;
+        }
+    }
+
+    display = XOpenDisplay(NULL);
 
     if (display == NULL) {
         fprintf(stderr, "Unable to connect to X server\n");
@@ -512,6 +526,11 @@ int main(int argc, char *argv[])
     if (!XRRQueryExtension (display, &event_base, &error_base) ||
         !XRRQueryVersion (display, &major, &minor))
     {
+        XCloseDisplay(display);
+        return EXIT_FAILURE;
+    }
+
+    if (flag_d && daemon(0, 0) != 0) {
         XCloseDisplay(display);
         return EXIT_FAILURE;
     }
@@ -541,7 +560,6 @@ int main(int argc, char *argv[])
     }
 
     XCloseDisplay(display);
-
     return EXIT_SUCCESS;
 }
 
