@@ -138,7 +138,9 @@ The touchscreen display may support four different modes, such as 'None', 'Full'
 
     dw = display width
     dh = display height
-    (The actual resolution of touchscreen display.)
+    dx = display X axis
+    dy = display Y axis
+    (The actual resolution and position of touchscreen display.)
 
 ### 'None' mode
 
