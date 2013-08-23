@@ -16,3 +16,5 @@ do_subst = sed -e 's,[@]bindir[@],$(bindir),g'
 
 75x11-touchscreen-calibrator: 75x11-touchscreen-calibrator.in
 	$(do_subst) < $< > $@
+
+dist_man_MANS = x11-touchscreen-calibrator.1
