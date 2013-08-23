@@ -1,15 +1,12 @@
-x11-touchscreen-calibrator
-==========================
+# x11-touchscreen-calibrator
 
 X Window System's Touchscreen Calibrator
 
 The purpose is to calibrate the touchscreen's coordinates automatically.
 
-Build from source
-=================
+## Build from source
 
-Prerequisite
-------------
+### Prerequisite
 
     autoconf >= 2.68
     automake >= 1.11
@@ -29,18 +26,15 @@ Fedora/openSUSE/Mageia
     libX11-devel
     libXrandr-devel
 
-Compilation
------------
+### Compilation
 
     autoreconf -if
     ./configure
     make
 
-Coordinate Transformation Matrix
-================================
+## Coordinate Transformation Matrix
 
-Zoom
-----
+### Zoom
 
 Restrict the cursor movement within the left half side of the touchscreen display.
 
@@ -74,8 +68,7 @@ Map the cursor movement to the top half touchscreen area.
 
 $ xinput set-prop '&lt;device name&gt;' 'Coordinate Transformation Matrix' 1 0 0 0 2 0 0 0 1
 
-Translation
------------
+### Translation
 
 Make the cursor shift right by half the width of the touchscreen.
 
@@ -109,8 +102,7 @@ Make the cursor shift up by half the height of the touchscreen.
 
 $ xinput set-prop '&lt;device name&gt;' 'Coordinate Transformation Matrix' 1 0 0 0 1 -0.5 0 0 1
 
-Zoom x Translation
-------------------
+### Zoom x Translation
 
 For example, if we want the center 1/4 area of the touchscreen to operate the fullscreen cursor movement.
 
@@ -132,8 +124,7 @@ equals to
 
 $ xinput set-prop '&lt;device name&gt;' 'Coordinate Transformation Matrix' 2 0 -0.5 0 2 -0.5 0 0 1
 
-Scaling mode
-============
+## Scaling mode
 
 The touchscreen display may support four different modes, such as 'None', 'Full', 'Center' and 'Full aspect'.
 
@@ -149,13 +140,11 @@ The touchscreen display may support four different modes, such as 'None', 'Full'
     dh = display height
     (The actual resolution of touchscreen display.)
 
-'None' mode
------------
+### 'None' mode
 
 The behavior is undefined. It may work like 'Full' mode or 'Center' mode.
 
-'Full' mode
------------
+### 'Full' mode
 
     ⎡ dw / sw ,  0       ,  dx / sw ⎤
     ⎜ 0       ,  dh / sh ,  dy / sh ⎥
@@ -168,8 +157,7 @@ equals to
     ⎣ 0 ,  0 ,  1       ⎦   ⎣ 0       , 0       , 1 ⎦
 
 
-'Center' mode
--------------
+### 'Center' mode
 
     ⎡ pw / dw ,  0       ,  (dw - pw) / sw / 2 + dx / sw ⎤
     ⎜ 0       ,  ph / sh ,  (dh - ph) / sh / 2 + dy / sh ⎥
@@ -187,8 +175,7 @@ equals to
     ⎜ 0       ,  dh / sh ,  dy / sh ⎥ X ⎜ 0       , ph / dh , 0 ⎥ X ⎜ 0 , 1 , - (1 - dh / ph) / 2 ⎥
     ⎣ 0       ,  0       ,  1       ⎦   ⎣ 0       , 0       , 1 ⎦   ⎣ 0 , 0 , 1                   ⎦
 
-'Full aspect' mode
-------------------
+### 'Full aspect' mode
 
 (with left and right side blank)
 
@@ -208,8 +195,7 @@ equals to
     ⎜ 0       ,  dh / sh ,  dy / sh ⎥ X ⎜ 0                 , 1 , 0 ⎥ X ⎜ 0 , 1 , 0                           ⎥
     ⎣ 0       ,  0       ,  1       ⎦   ⎣ 0                 , 0 , 1 ⎦   ⎣ 0 , 0 , 1                           ⎦
 
-Rotation
-========
+## Rotation
 
 $ xrandr -o left
 
@@ -229,8 +215,7 @@ $ xrandr -o inverted
     ⎜  0 -1 1 ⎥
     ⎣  0  0 1 ⎦
 
-Reflection
-==========
+## Reflection
 
 $ xrandr -x
 
@@ -244,8 +229,7 @@ $ xrandr -y
     ⎜ 0 -1 1 ⎥
     ⎣ 0  0 1 ⎦
 
-License
-=======
+## License
 
 Copyright 2013 Shih-Yuan Lee (FourDollars)
 
