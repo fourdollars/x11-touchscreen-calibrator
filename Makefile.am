@@ -9,8 +9,8 @@ x11_touchscreen_calibrator_LDFLAGS = @X11_LIBS@
 xsessiondir   = $(sysconfdir)/X11/Xsession.d/
 xsession_DATA = 75x11-touchscreen-calibrator
 
-EXTRA_DIST = 75x11-touchscreen-calibrator.in
-CLEANFILES = $(xsession_DATA)
+EXTRA_DIST = 75x11-touchscreen-calibrator.in ChangeLog LICENSE README.md
+CLEANFILES = $(xsession_DATA) ChangeLog
 
 do_subst = sed -e 's,[@]bindir[@],$(bindir),g'
 
@@ -18,3 +18,11 @@ do_subst = sed -e 's,[@]bindir[@],$(bindir),g'
 	$(do_subst) < $< > $@
 
 dist_man_MANS = x11-touchscreen-calibrator.1
+
+ChangeLog:
+	git log --date-order --date=short | \
+		sed -e '/^commit.*$$/d' | \
+		awk '/^Author/ {sub(/\\$$/,""); getline t; print $$0 t; next}; 1' | \
+		sed -e 's/^Author: //g' | \
+		sed -e 's/>Date:   \([0-9]*-[0-9]*-[0-9]*\)/>\t\1/g' | \
+		sed -e 's/^\(.*\) \(<.*>\)\t\(.*\)/\3  \1 \2/g' -e 's/^    /\t/g' > $@
