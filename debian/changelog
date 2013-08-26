@@ -1,0 +1,5 @@
+x11-touchscreen-calibrator (0.0-1) unstable; urgency=low
+
+  * Initial release. (Closes: #720916)
+
+ -- Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>  Mon, 26 Aug 2013 12:51:47 +0800

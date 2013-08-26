@@ -1,0 +1,19 @@
+Source: x11-touchscreen-calibrator
+Section: x11
+Priority: extra
+Maintainer: Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev, libxi-dev, libx11-dev,
+	libxrandr-dev, x11proto-input-dev, pkg-config
+Standards-Version: 3.9.4
+Homepage: http://fourdollars.github.io/x11-touchscreen-calibrator/
+Vcs-Browser: https://github.com/fourdollars/x11-touchscreen-calibrator
+Vcs-Git: git://github.com/fourdollars/x11-touchscreen-calibrator.git
+
+Package: x11-touchscreen-calibrator
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: X Window System's Touchscreen Calibrator
+ The purpose is to calibrate the touchscreen's coordinates automatically.
+ .
+ Install this package and it will run automatically in the background of X
+ Window System.
