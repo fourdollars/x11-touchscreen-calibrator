@@ -441,6 +441,9 @@ void scaling_full_aspect_mode(Display *display)
 
 void routine(Display *display)
 {
+    XCloseDisplay(display);
+    display = XOpenDisplay(NULL);
+
     search_touchscreen_device(display);
     get_display_info(display);
 
@@ -497,6 +500,10 @@ void routine(Display *display)
             }
         }
     }
+
+    XRRSelectInput(display, RootWindow(display, 0), RROutputChangeNotifyMask);
+    XSelectInput(display, RootWindow(display, 0), StructureNotifyMask);
+    XSync(display, False);
 }
 
 int main(int argc, char *argv[])
@@ -536,9 +543,6 @@ int main(int argc, char *argv[])
     }
 
     routine(display);
-    XSync(display, False);
-
-    XRRSelectInput(display, RootWindow(display, 0), RROutputChangeNotifyMask);
 
     for (;;) {
         XEvent ev;
@@ -546,16 +550,20 @@ int main(int argc, char *argv[])
 
         do {
             XNextEvent(display, &ev);
+            usleep(100000);
             switch (ev.type - event_base) {
                 case RRNotify:
                     nev = (XRRNotifyEvent *) &ev;
                     if (nev->subtype == RRNotify_OutputChange) {
                         routine(display);
-                        XSync(display, False);
                     }
                     break;
             }
-            usleep(100000);
+            switch (ev.type) {
+                case ConfigureNotify:
+                    routine(display);
+                    break;
+            }
         } while (XEventsQueued(display, QueuedAfterFlush));
     }
 
