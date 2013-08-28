@@ -1,43 +1,7 @@
-This work was packaged for Debian by:
-
-    Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com> on Mon, 26 Aug 2013 12:51:47 +0800
-
-It was downloaded from:
-
-    http://fourdollars.github.io/x11-touchscreen-calibrator/
-
-Upstream Author(s):
-
-    Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
-
-Copyright:
-
-    Copyright (C) 2013 Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
-
-License:
-
-    This package is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This package is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this package; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
-
-On Debian systems, the complete text of the GNU General
-Public License version 2 can be found in `/usr/share/common-licenses/GPL-2'.
-
-The Debian packaging is:
-
-    Copyright (C) 2013 Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
-
-you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Shih-Yuan Lee (FourDollars)
+Upstream-Contact: Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+Source: http://fourdollars.github.io/x11-touchscreen-calibrator/
+Files: *
+Copyright: 2013 Shih-Yuan Lee (FourDollars)
+License: GPL-3+
