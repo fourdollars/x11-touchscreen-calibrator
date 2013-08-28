@@ -1,4 +1,4 @@
-x11-touchscreen-calibrator (0.0-1) unstable; urgency=low
+x11-touchscreen-calibrator (0.1-1) unstable; urgency=low
 
   * Initial release. (Closes: #720916)
 
