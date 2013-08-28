@@ -10,7 +10,7 @@ xsessiondir   = $(sysconfdir)/X11/Xsession.d/
 xsession_DATA = 75x11-touchscreen-calibrator
 
 EXTRA_DIST = 75x11-touchscreen-calibrator.in ChangeLog LICENSE README.md
-CLEANFILES = $(xsession_DATA) ChangeLog
+CLEANFILES = $(xsession_DATA)
 
 do_subst = sed -e 's,[@]bindir[@],$(bindir),g'
 
