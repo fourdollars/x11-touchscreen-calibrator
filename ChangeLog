@@ -1,0 +1,103 @@
+2013-08-28  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Do not clean ChangLog to avoid some build failure.
+
+2013-08-27  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Regain the display variable to get the latest resources.
+
+2013-08-26  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Include ChangeLog LICENSE README.md to release.
+
+2013-08-23  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Add the manual page.
+
+2013-08-23  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Add the Xsession script to start the daemon.
+
+2013-08-23  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Add an optional argument to run as a background process.
+
+2013-08-23  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Looply watching the display output change event.
+
+2013-08-23  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Add the missing explanation.
+
+2013-08-23  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Adjust README.md
+
+2013-08-23  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Add the license information.
+
+2013-08-23  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Adjust the homepage URL.
+
+2013-08-23  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Rename to x11-touchscreen-calibrator.
+
+2013-08-17  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	The issue when combining rotation and reflection.
+
+2013-08-16  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Add rotation and reflection support.
+
+2013-08-16  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Calculate the matrix for different scaling mode.
+
+2013-08-16  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Skip some unnecessary check.
+
+2013-08-16  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Adjust for scaling mode.
+
+2013-08-16  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Store touchscreen and rotation.
+
+2013-08-16  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Get scaling mode.
+
+2013-08-16  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Store all relative variables.
+
+2013-08-16  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Get rotation information.
+
+2013-08-16  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Downgrade the prereq of autoconf.
+
+2013-08-15  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Get the display information.
+
+2013-08-15  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Search touchscreen device.
+
+2013-08-15  Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
+
+	Add the usage of 'Coordinate Transformation Matrix' and some formula for different scaling mode.
+
+2013-08-14  Shih-Yuan Lee <fourdollars@gmail.com>
+
+	Initial commit
