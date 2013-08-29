@@ -1,6 +1,6 @@
 Source: x11-touchscreen-calibrator
 Section: x11
-Priority: extra
+Priority: optional
 Maintainer: Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
 Build-Depends: debhelper (>= 9), autotools-dev, libxi-dev, libx11-dev,
 	libxrandr-dev, x11proto-input-dev, pkg-config
