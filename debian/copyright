@@ -2,6 +2,7 @@ Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Shih-Yuan Lee (FourDollars)
 Upstream-Contact: Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
 Source: http://fourdollars.github.io/x11-touchscreen-calibrator/
+
 Files: *
 Copyright: 2013 Shih-Yuan Lee (FourDollars)
 License: GPL-3+
