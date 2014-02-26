@@ -444,6 +444,8 @@ void routine(Display *display)
     XCloseDisplay(display);
     display = XOpenDisplay(NULL);
 
+    usleep(100000); /* It needs to wait for a while before X resources are ready. */
+
     search_touchscreen_device(display);
     get_display_info(display);
 
