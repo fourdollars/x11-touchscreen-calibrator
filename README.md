@@ -5,10 +5,8 @@ X Window System's Touchscreen Calibrator
 X11 Touchscreen Calibrator runs as a daemon in the background.
 It will detect the touchscreen automatically and adjust the corresponding
 Coordinate Transformation Matrix of Touchscreen xinput when the resolution
-is changed.
-
-It should also support rotation, reflection and different scaling modes of
-display output.
+is changed. It should also support rotation, reflection and different scaling
+modes of display output.
 
 ## Build from source
 
