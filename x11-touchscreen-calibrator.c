@@ -452,15 +452,13 @@ void scaling_none_mode(Display *display)
     apply_matrix(display, deviceid, m);
 }
 
-void routine(Display *display)
+void routine(Display **display)
 {
-    XCloseDisplay(display);
-    display = XOpenDisplay(NULL);
+    XCloseDisplay(*display);
+    *display = XOpenDisplay(getenv("DISPLAY"));
 
-    usleep(100000); /* It needs to wait for a while before X resources are ready. */
-
-    search_touchscreen_device(display);
-    get_display_info(display);
+    search_touchscreen_device(*display);
+    get_display_info(*display);
 
     if (touch_screen) {
         printf("Touchscreen: '%s'\n", touch_screen);
@@ -497,29 +495,29 @@ void routine(Display *display)
                 0   , 1.0f , 0,
                 0   , 0    , 1.0f
             };
-            apply_matrix(display, deviceid, m);
+            apply_matrix(*display, deviceid, m);
         } else {
             switch (scaling_mode) {
                 case ScalingMode_None:
                     printf(" 'None'");
-                    scaling_none_mode(display);
+                    scaling_none_mode(*display);
                     break;
                 case ScalingMode_Full:
-                    scaling_full_mode(display);
+                    scaling_full_mode(*display);
                     break;
                 case ScalingMode_Center:
-                    scaling_center_mode(display);
+                    scaling_center_mode(*display);
                     break;
                 case ScalingMode_Full_aspect:
-                    scaling_full_aspect_mode(display);
+                    scaling_full_aspect_mode(*display);
                     break;
             }
         }
     }
 
-    XRRSelectInput(display, RootWindow(display, 0), RROutputChangeNotifyMask);
-    XSelectInput(display, RootWindow(display, 0), StructureNotifyMask);
-    XSync(display, False);
+    XRRSelectInput(*display, RootWindow(*display, 0), RROutputChangeNotifyMask);
+    XSelectInput(*display, RootWindow(*display, 0), StructureNotifyMask);
+    XSync(*display, False);
 }
 
 int main(int argc, char *argv[])
@@ -539,7 +537,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    display = XOpenDisplay(NULL);
+    display = XOpenDisplay(getenv("DISPLAY"));
 
     if (display == NULL) {
         fprintf(stderr, "Unable to connect to X server\n");
@@ -558,7 +556,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    routine(display);
+    routine(&display);
 
     for (;;) {
         XEvent ev;
@@ -566,18 +564,17 @@ int main(int argc, char *argv[])
 
         do {
             XNextEvent(display, &ev);
-            usleep(100000);
             switch (ev.type - event_base) {
                 case RRNotify:
                     nev = (XRRNotifyEvent *) &ev;
                     if (nev->subtype == RRNotify_OutputChange) {
-                        routine(display);
+                        routine(&display);
                     }
                     break;
             }
             switch (ev.type) {
                 case ConfigureNotify:
-                    routine(display);
+                    routine(&display);
                     break;
             }
         } while (XEventsQueued(display, QueuedAfterFlush));
