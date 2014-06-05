@@ -11,7 +11,7 @@ LT_PREREQ([2.4.2])
 LT_INIT
 
 AM_MAINTAINER_MODE([enable])
-AM_INIT_AUTOMAKE([dist-xz no-dist-gzip silent-rules foreign])
+AM_INIT_AUTOMAKE([dist-xz no-dist-gzip silent-rules])
 AM_SILENT_RULES([yes])
 
 # Checks for programs.
