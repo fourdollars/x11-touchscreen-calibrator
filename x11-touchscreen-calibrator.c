@@ -439,6 +439,19 @@ void scaling_full_aspect_mode(Display *display)
     apply_matrix(display, deviceid, m);
 }
 
+void scaling_none_mode(Display *display)
+{
+    float m[9] = {
+        1.0f, 0    , 0,
+        0   , 1.0f , 0,
+        0   , 0    , 1.0f
+    };
+
+    rotate_reflect(m);
+
+    apply_matrix(display, deviceid, m);
+}
+
 void routine(Display *display)
 {
     XCloseDisplay(display);
@@ -489,6 +502,7 @@ void routine(Display *display)
             switch (scaling_mode) {
                 case ScalingMode_None:
                     printf(" 'None'");
+                    scaling_none_mode(display);
                     break;
                 case ScalingMode_Full:
                     scaling_full_mode(display);
