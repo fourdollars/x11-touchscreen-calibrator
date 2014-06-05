@@ -30,11 +30,11 @@ Fedora/openSUSE/Mageia
     libX11-devel
     libXrandr-devel
 
-### Compilation
+### Compile &amp; Install
 
     autoreconf -if
-    ./configure
-    make
+    ./configure --prefix=/usr --sysconfdir=/etc
+    make && make install
 
 ## Coordinate Transformation Matrix
 
