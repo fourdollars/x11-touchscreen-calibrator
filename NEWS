@@ -1,3 +1,13 @@
 Version 0.2 - ?
+
+* Feature: Add RPM spec file.
+* Bugfix: Fix the crash issue.
+* Bugfix: Improve the support for the fglrx video driver.
+
 Version 0.1 - Aug 28, 2013
+
+* Bugfix: Fix the function broken issue.
+
 Version 0.0 - Aug 26, 2013
+
+* Feature: The first release, but the function is broken.
