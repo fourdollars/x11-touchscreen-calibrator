@@ -9,7 +9,8 @@ x11_touchscreen_calibrator_LDFLAGS = @X11_LIBS@
 xsessiondir   = $(sysconfdir)/X11/Xsession.d/
 xsession_DATA = 75x11-touchscreen-calibrator
 
-EXTRA_DIST = 75x11-touchscreen-calibrator.in ChangeLog LICENSE README.md
+EXTRA_DIST = 75x11-touchscreen-calibrator.in \
+             x11-touchscreen-calibrator.spec
 CLEANFILES = $(xsession_DATA)
 
 do_subst = sed -e 's,[@]bindir[@],$(bindir),g'
