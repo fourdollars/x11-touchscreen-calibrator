@@ -53,8 +53,7 @@ static int deviceid;
 
 static const char* white_list[] = {
     "LVDS",
-    "LVDS1",
-    "eDP1"
+    "eDP"
 };
 
 void search_touchscreen_device(Display *display)
@@ -107,7 +106,7 @@ void get_display_info(Display *display)
 
             for (l = 0; l < size; l++)
             {
-                if (strcmp(white_list[l], output->name) == 0)
+                if (strstr(output->name, white_list[l]))
                 {
                     for (j = 0; j < output->nmode; j++)
                     {
@@ -455,6 +454,7 @@ void scaling_none_mode(Display *display)
 void routine(Display **display)
 {
     XCloseDisplay(*display);
+    usleep(100000); /* It needs to wait for a while before X resources are ready. */
     *display = XOpenDisplay(getenv("DISPLAY"));
 
     search_touchscreen_device(*display);
@@ -577,7 +577,7 @@ int main(int argc, char *argv[])
                     routine(&display);
                     break;
             }
-        } while (XEventsQueued(display, QueuedAfterFlush));
+        } while (XPending(display));
     }
 
     XCloseDisplay(display);
