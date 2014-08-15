@@ -8,6 +8,9 @@ Coordinate Transformation Matrix of Touchscreen xinput when the resolution
 is changed. It should also support rotation, reflection and different scaling
 modes of display output.
 
+**It seems no need for this program on the latest X Window System.**
+*2014/08/15*
+
 ## Build from source
 
 ### Prerequisite
