@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
 Build-Depends: debhelper (>= 9), autotools-dev, libxi-dev, libx11-dev,
 	libxrandr-dev, x11proto-input-dev, pkg-config
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Homepage: http://fourdollars.github.io/x11-touchscreen-calibrator/
 Vcs-Browser: https://github.com/fourdollars/x11-touchscreen-calibrator
 Vcs-Git: git://github.com/fourdollars/x11-touchscreen-calibrator.git
