@@ -1,3 +1,9 @@
+x11-touchscreen-calibrator (0.2-1) unstable; urgency=medium
+
+  * Sync to v0.2 release.
+
+ -- Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>  Fri, 15 Aug 2014 14:24:17 +0800
+
 x11-touchscreen-calibrator (0.1-1) unstable; urgency=low
 
   * Initial release. (Closes: #720916)
