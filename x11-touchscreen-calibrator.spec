@@ -1,12 +1,11 @@
 Name:           x11-touchscreen-calibrator
-Version:        0.1
+Version:        0.2
 Release:        1%{?dist}
 Summary:        X Window System's Touchscreen Calibrator
 Group:          Applications/System
 License:        GPLv3+
 URL:            http://fourdollars.github.io/x11-touchscreen-calibrator/
-#https://github.com/fourdollars/%{name}/archive/%{version}.tar.gz
-Source0:        %{name}-%{version}.tar.gz
+Source0:        https://github.com/fourdollars/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
 BuildRequires:  libXi-devel
 BuildRequires:  libX11-devel
 BuildRequires:  libXrandr-devel
@@ -35,12 +34,15 @@ make %{?_smp_mflags}
 
 
 %files
-%doc LICENSE README.md
+%doc COPYING README AUTHORS ChangeLog NEWS
 %{_sysconfdir}/X11/xinit/xinitrc.d/75x11-touchscreen-calibrator
 %{_bindir}/%{name}
 %{_mandir}/man1/%{name}.1.*
 
 
 %changelog
+* Fri Aug 15 2014 Wei-Lun Chao <bluebat@member.fsf.org> - 0.2-1
+- Update to 0.2
+
 * Tue Mar 11 2014 Wei-Lun Chao <bluebat@member.fsf.org> - 0.1-1
 - Initial package
