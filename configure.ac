@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([x11-touchscreen-calibrator], [0.1], [https://github.com/fourdollars/x11-touchscreen-calibrator/issues], [x11-touchscreen-calibrator], [http://fourdollars.github.io/x11-touchscreen-calibrator/])
+AC_INIT([x11-touchscreen-calibrator], [0.2], [https://github.com/fourdollars/x11-touchscreen-calibrator/issues], [x11-touchscreen-calibrator], [http://fourdollars.github.io/x11-touchscreen-calibrator/])
 AC_CONFIG_SRCDIR([x11-touchscreen-calibrator.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -11,7 +11,7 @@ LT_PREREQ([2.4.2])
 LT_INIT
 
 AM_MAINTAINER_MODE([enable])
-AM_INIT_AUTOMAKE([dist-xz no-dist-gzip silent-rules foreign])
+AM_INIT_AUTOMAKE([dist-xz no-dist-gzip silent-rules])
 AM_SILENT_RULES([yes])
 
 # Checks for programs.

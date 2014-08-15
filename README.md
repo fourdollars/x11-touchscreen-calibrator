@@ -2,7 +2,11 @@
 
 X Window System's Touchscreen Calibrator
 
-The purpose is to calibrate the touchscreen's coordinates automatically.
+X11 Touchscreen Calibrator runs as a daemon in the background.
+It will detect the touchscreen automatically and adjust the corresponding
+Coordinate Transformation Matrix of Touchscreen xinput when the resolution
+is changed. It should also support rotation, reflection and different scaling
+modes of display output.
 
 ## Build from source
 
@@ -26,11 +30,11 @@ Fedora/openSUSE/Mageia
     libX11-devel
     libXrandr-devel
 
-### Compilation
+### Compile &amp; Install
 
     autoreconf -if
-    ./configure
-    make
+    ./configure --prefix=/usr --sysconfdir=/etc
+    make && make install
 
 ## Coordinate Transformation Matrix
 
@@ -235,4 +239,4 @@ $ xrandr -y
 
 Copyright 2013 Shih-Yuan Lee (FourDollars)
 
-Licensed under GPL version 3 or any later version - see [LICENSE](https://raw.github.com/fourdollars/x11-touchscreen-calibrator/master/LICENSE) file.
+Licensed under GPL version 3 or any later version - see [COPYING](https://raw.github.com/fourdollars/x11-touchscreen-calibrator/master/COPYING) file.
