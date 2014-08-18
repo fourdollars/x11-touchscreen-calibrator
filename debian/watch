@@ -1,3 +1,4 @@
 # watch control file for uscan
 version=3
-https://github.com/fourdollars/x11-touchscreen-calibrator/releases/ .*/x11-touchscreen-calibrator-([\d\.]+).tar.xz
+opts="pgpsigurlmangle=s/$/.sig/" \
+  https://github.com/fourdollars/x11-touchscreen-calibrator/releases/ .*/x11-touchscreen-calibrator-([\d\.]+).tar.xz
