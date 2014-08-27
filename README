@@ -8,8 +8,22 @@ Coordinate Transformation Matrix of Touchscreen xinput when the resolution
 is changed. It should also support rotation, reflection and different scaling
 modes of display output.
 
-**It seems no need for this program on the latest X Window System.**
-*2014/08/15*
+## Install
+
+### Debian/Ubuntu
+
+[Debian archive](https://tracker.debian.org/pkg/x11-touchscreen-calibrator)
+
+    # apt-get insall x11-touchscreen-calibrator
+
+[Ubuntu archive](https://launchpad.net/ubuntu/+source/x11-touchscreen-calibrator)
+
+    $ apt-get insall x11-touchscreen-calibrator
+
+[Ubuntu PPA](https://launchpad.net/~fourdollars/+archive/ubuntu/x11-touchscreen-calibrator)
+
+    $ add-apt-repository ppa:fourdollars/x11-touchscreen-calibrator
+    $ apt-get update && apt-get insall x11-touchscreen-calibrator
 
 ## Build from source
 
@@ -240,6 +254,6 @@ $ xrandr -y
 
 ## License
 
-Copyright 2013 Shih-Yuan Lee (FourDollars)
+Copyright 2013-2014 Shih-Yuan Lee (FourDollars)
 
 Licensed under GPL version 3 or any later version - see [COPYING](https://raw.github.com/fourdollars/x11-touchscreen-calibrator/master/COPYING) file.
