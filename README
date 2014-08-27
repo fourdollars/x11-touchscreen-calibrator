@@ -14,16 +14,16 @@ modes of display output.
 
 [Debian archive](https://tracker.debian.org/pkg/x11-touchscreen-calibrator)
 
-    # apt-get insall x11-touchscreen-calibrator
+    # apt-get install x11-touchscreen-calibrator
 
 [Ubuntu archive](https://launchpad.net/ubuntu/+source/x11-touchscreen-calibrator)
 
-    $ apt-get insall x11-touchscreen-calibrator
+    $ apt-get install x11-touchscreen-calibrator
 
 [Ubuntu PPA](https://launchpad.net/~fourdollars/+archive/ubuntu/x11-touchscreen-calibrator)
 
     $ add-apt-repository ppa:fourdollars/x11-touchscreen-calibrator
-    $ apt-get update && apt-get insall x11-touchscreen-calibrator
+    $ apt-get update && apt-get install x11-touchscreen-calibrator
 
 ## Build from source
 
