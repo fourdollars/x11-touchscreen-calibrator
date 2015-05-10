@@ -1,3 +1,10 @@
+x11-touchscreen-calibrator (0.2-2) unstable; urgency=medium
+
+  * Fix compiler-flags-hidden warning, update Debian policy to 3.9.6 and start
+    to use debian/gbp.conf.
+
+ -- Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>  Sat, 09 May 2015 22:06:53 +0800
+
 x11-touchscreen-calibrator (0.2-1) unstable; urgency=medium
 
   * Sync to v0.2 release.

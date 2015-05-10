@@ -2,9 +2,15 @@ Source: x11-touchscreen-calibrator
 Section: x11
 Priority: optional
 Maintainer: Shih-Yuan Lee (FourDollars) <fourdollars@gmail.com>
-Build-Depends: debhelper (>= 9), autotools-dev, libxi-dev, libx11-dev,
-	libxrandr-dev, x11proto-input-dev, pkg-config
-Standards-Version: 3.9.5
+Build-Depends:
+    autotools-dev,
+    debhelper (>= 9),
+    libx11-dev,
+    libxi-dev,
+    libxrandr-dev,
+    pkg-config,
+    x11proto-input-dev
+Standards-Version: 3.9.6
 Homepage: http://fourdollars.github.io/x11-touchscreen-calibrator/
 Vcs-Browser: https://github.com/fourdollars/x11-touchscreen-calibrator
 Vcs-Git: git://github.com/fourdollars/x11-touchscreen-calibrator.git
