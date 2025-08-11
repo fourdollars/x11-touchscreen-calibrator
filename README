@@ -39,7 +39,7 @@ Debian/Ubuntu
     libxi-dev
     libx11-dev
     libxrandr-dev
-    x11proto-input-dev
+    x11proto-dev
 
 Fedora/openSUSE/Mageia
 
